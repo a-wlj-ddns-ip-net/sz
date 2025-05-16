@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Dice Shaker</title>
+    <style>
+        .dice-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .dice {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border: 1px solid black;
+            border-radius: 10px;
+            font-size: 76px;
+            text-align: center;
+            line-height: 80px;
+            margin: 0 10px;
+        }
+        .red {
+            color: red;
+        }
+        #shake-btn {
+            font-size: 48px;
+        }
+        #hide-btn {
+            font-size: 48px;
+        }
+        #counts {
+            margin-top: 20px;
+            font-size: 36px; /* 将数字统计的字体大小设置为36px */
+            text-align: center; /* 居中对齐数字统计 */
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        #shake-again-btn {
+            font-size: 48px;
+            color: red;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <audio id="click-sound">
+        <source src="click.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="shake-sound">
+        <source src="12252.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <h1>Online Dice Shaker</h1>
+
+    <div class="dice-row">
+        <div class="dice"></div>
+        <div class="dice"></div>
+        <div class="dice"></div>
+    </div>
+    <div class="dice-row">
+        <div class="dice"></div>
+        <div class="dice"></div>
+    </div>
+
+    <div class="button-container">
+        <button id="shake-btn" onclick="shakeDice()">摇</button>
+        <button id="shake-again-btn" onclick="shakeDice()">摇一摇</button>
+        <button id="hide-btn" onclick="toggleInfo()">隐藏信息</button>
+    </div>
+    <div id="counts"></div>
+
+    <script>
+        function shakeDice() {
+            const diceValues = [];
+            const diceElements = document.querySelectorAll(".dice");
+            diceElements.forEach(function(dice) {
+                const diceValue = Math.floor(Math.random() * 6) + 1;
+                diceValues.push(diceValue);
+                switch (diceValue) {
+                    case 1:
+                        dice.textContent = "⚀";
+                        dice.classList.add("red");
+                        break;
+                    case 2:
+                        dice.textContent = "⚁";
+                        dice.classList.remove("red");
+                        break;
+                    case 3:
+                        dice.textContent = "⚂";
+                        dice.classList.remove("red");
+                        break;
+                    case 4:
+                        dice.textContent = "⚃";
+                        dice.classList.add("red");
+                        break;
+                    case 5:
+                        dice.textContent = "⚄";
+                        dice.classList.remove("red");
+                        break;
+                    case 6:
+                        dice.textContent = "⚅";
+                        dice.classList.remove("red");
+                        break;
+                }
+            });
+            displayCounts(diceValues);
+            playShakeSound(); // 播放摇骰子声音
+            playClickSound(); // 播放点击声音
+        }
+
+        function displayCounts(diceValues) {
+            const countsElement = document.getElementById("counts");
+            countsElement.innerHTML = "";
+            const counts = [0, 0, 0, 0, 0, 0];
+            let onesCount = 0;
+            diceValues.forEach(function(diceValue) {
+                counts[diceValue - 1]++;
+                if (diceValue === 1) {
+                    onesCount++;
+                }
+            });
+            for (let i = 0; i < counts.length; i++) {
+                const count = counts[i] + (i !== 0 ? onesCount : 0);
+                const countText = `${i + 1}=${count}`;
+                const countDiv = document.createElement("div");
+                countDiv.textContent = countText;
+                countsElement.appendChild(countDiv);
+            }
+        }
+
+        function toggleInfo() {
+            const countsElement = document.getElementById("counts");
+            const diceElements = document.querySelectorAll(".dice");
+            if (countsElement.style.display === "none") {
+                countsElement.style.display = "block";
+                diceElements.forEach(function(dice) {
+                    dice.style.display = "block";
+                });
+                document.getElementById("hide-btn").textContent = "隐藏信息";
+            } else {
+                countsElement.style.display = "none";
+                diceElements.forEach(function(dice) {
+                    dice.style.display = "none";
+                });
+                document.getElementById("hide-btn").textContent = "显示信息";
+            }
+            playClickSound(); // 播放点击声音
+        }
+
+        function playClickSound() {
+            const clickSound = document.getElementById("click-sound");
+            clickSound.play();
+        }
+
+        function playShakeSound() {
+            const shakeSound = document.getElementById("shake-sound");
+            shakeSound.play();
+        }
+    </script>
+</body>
+</html>
